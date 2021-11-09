@@ -146,7 +146,7 @@ $$
 
 ###### 5.3 Visualization
 
-&emsp;&emsp;文章就正例和反例和sentence embedding投影到二维进行可视化, 结果表明, 使用对比学习后, 正例句子明显对齐.
+&emsp;&emsp;文章就正例和反例和sentence embedding投影到二维进行可视化, 结果表明, 使用对比学习后, 正例句子在向量空间中明显对齐.
 
 [SimCLR]: http://proceedings.mlr.press/v119/chen20j.html
 [SimCSE]: https://arxiv.org/abs/2104.08821
