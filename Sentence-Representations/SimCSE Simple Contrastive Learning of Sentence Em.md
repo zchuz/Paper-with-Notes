@@ -41,6 +41,8 @@ $$
 
     > 向量嵌入应该分布在一个超球面上.
 
+![](./images/018.png)
+
 ##### 3. Unsupervised SimCSE
 
 &emsp;&emsp; 想法十分简单, 使用同一个句子两次送入独立的dropout, 得到两个不同的句子作为正例.
@@ -57,6 +59,8 @@ $$
 <img src="./images/006.png" style="zoom:70%;" />
 
 &emsp;&emsp;每10个step记录模型的*uniformity*和*alignment*, 如下图. 
+
+> We take STS-B pairs with a score higher than 4 as $p_{pos}$ and all STS-B sentences as $p_{data}$
 
 <img src="./images/007.png" style="zoom:75%;" />
 
@@ -147,11 +151,29 @@ $$
 
 ##### D More Ablation
 
-1. 温度超参数对性能的影响. 温度超参在0.05时最佳, 并且余弦相似度比内积表现更好.![](./images/015.png)
+1. 温度超参数对性能的影响. 温度超参在0.05时最佳, 并且余弦相似度比内积表现更好.
 
+   ![](./images/015.png)
+   
 2. Hard Negative对性能的影响.
 
+   &emsp; &emsp; 直接使用in-batch neg和hard neg是有区别的, 一个代表"非正例", 另一个代表"真反例 / 假反例"(真反例代表自己的反例, 假反例代表in-batch内其他句子的反例, 此处的反例均为contradiction, 即hard negative). 如果将一个句子的反例给另一个句子当作"真反例", 这样会出现错误. 因此改写了有监督的训练目标, **当且仅当遇到真反例时, 才将其纳入损失**.  同时也测试了将中性分类加入反例, 这样会降低表现. 实验结果如下, 其中$\alpha=1.0$为上文所使用的设置.
+   $$
+   \mathcal l_i = log \frac{e^{sim(h_i, h_i^{+})/\tau}}
+   {\sum_{j=1}^N
+   (e^{sim(h_i, h_j^{+})/\tau}
+   + \alpha^{\mathbb 1_i^j} e^{sim(h_i, h_j^-) / \tau})
+   }
+   $$
+   
+
    ![](./images/016.png)
+
+##### E Distribution of Singular Value
+
+&emsp;&emsp; 绘制了奇异值的分布情况, 可以发现, 没有经过处理的BERT奇异值分布非常不均匀, 而经过处理后, 奇异值分布开始变得均匀, 并且使用whiting, flow这些目的是让分布各向同性的方法时, 奇异值分布会更加均衡.
+
+<img src="./images/017.png" style="zoom:67%;" />
 
 [W]: https://ssnl.github.io/hypersphere/
 
